@@ -1,12 +1,16 @@
 import { MikroORM } from "@mikro-orm/core";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from "type-graphql";
 
 // Configs
 import microConfig from "./mikro-orm.config";
 
 // Constants
 import { _prod_ } from "./constants";
+
+// Resolver
+import { HelloResolver } from "./resolvers/hello";
 
 // Entities
 import { Post } from "./entities/Post";
@@ -19,7 +23,15 @@ const main = async () => {
   // Express setup
   const app = express();
 
-  app.get("/", (_, res) => res.json({ YO: "YO" }));
+  // Apollo server setup
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [HelloResolver],
+      validate: false,
+    }),
+  });
+
+  apolloServer.applyMiddleware({ app });
 
   app.listen(4000, () => console.log("Listening on port 4000"));
 };
