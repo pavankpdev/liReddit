@@ -11,6 +11,7 @@ import { _prod_ } from "./constants";
 
 // Resolver
 import { HelloResolver } from "./resolvers/hello";
+import { PostResolver } from "./resolvers/post";
 
 // Entities
 import { Post } from "./entities/Post";
@@ -26,9 +27,10 @@ const main = async () => {
   // Apollo server setup
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [HelloResolver, PostResolver],
       validate: false,
     }),
+    context: () => ({ em: orm.em }),
   });
 
   apolloServer.applyMiddleware({ app });
